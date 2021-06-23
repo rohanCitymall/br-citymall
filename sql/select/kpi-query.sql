@@ -30,7 +30,7 @@ select  user_id  ,
 ,cx_repeat_rate as (
 select
         orders.team_leader ,
-        ( count(  order_id)/ coalesce(count( distinct user_id),1)) as repeat_rate 
+        ( count(  order_id)/ count( distinct user_id)) as repeat_rate 
 from orders 
 where   order_status <> 'CANCELLED' 
  and     user_id not in ( select user_id from first_order_cx where date_trunc('month',first_order_date) = date_trunc('month',{{to_date}}) )

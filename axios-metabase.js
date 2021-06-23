@@ -10,18 +10,8 @@ const config = {
         'Referer': 'https://analytics.citymall.live/question'
 };
 
-const body = {
-    type: "native",
-    native: {
-        query: `select \n    tl.name as name,\n    tl.id as erp_id,\n    'Individual' as type,\n    ua.city as city,\n    p.district as district,\n    ua.state as state,\n    ua.pincode as pincode,\n    tl.phone_number as mobile,\n    (\n        case\n            when discarded_at is null then 1\n            else 0\n        end\n    ) as is_available,\n    1 as status\nfrom bd_leader_mapping blm\njoin team_leaders tl on blm.leader_id = tl.id\njoin \n(\n    select \n        u.user_id, \n        u.city, \n        u.state, \n        u.pincode \n    from user_addresses u where u.user_id in (select distinct user_id from user_addresses) \n) ua \non ua.user_id = tl.user_id\njoin pincodes p on ua.pincode = p.pincode order by tl.phone_number limit 10`,
-        "template-tags": {},
-    },
-    database: 2,
-    parameters: [],
-};
-
-const axiosCreate = axios.create({
+const axiosMetabse = axios.create({
     headers: config
 })
 
-module.exports = axiosCreate
+module.exports = axiosMetabse

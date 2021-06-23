@@ -1,5 +1,5 @@
 const axios = require('axios')
-const axiosCreate = require('./axios-metabase')
+const axiosMetabse = require('./axios-metabase')
 
 const metaUrl = 'https://analytics.citymall.live/api/dataset'
 
@@ -29,7 +29,7 @@ let fields = []
 let count = null
 
 async function upload(){
-    const resCount = await axiosCreate.post(metaUrl,countBody)
+    const resCount = await axiosMetabse.post(metaUrl,countBody)
     count = Math.ceil(resCount.data.data.rows[0][0]/100)
 
     for(let i = 0; i< count; i++){
@@ -39,7 +39,7 @@ async function upload(){
         const data = []
         console.log('limit',limit,'\noffset',offset)
     
-        const res = await axiosCreate.post(metaUrl,body)
+        const res = await axiosMetabse.post(metaUrl,body)
         fields = fields.length ? fields : res.data.data.cols.map(el => el.name)
 
         res.data.data.rows.forEach(record => {
