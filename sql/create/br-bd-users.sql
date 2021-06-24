@@ -1,5 +1,6 @@
 CREATE TABLE br_bd_users(
-  br_id BIGINT PRIMARY KEY,
+  admin_id BIGINT PRIMARY KEY,
+  br_id BIGINT,
   name TEXT,
   emp_role_id TEXT,
   designation_name TEXT,

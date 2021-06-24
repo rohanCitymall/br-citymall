@@ -1,12 +1,13 @@
 with bd_tl_mapping as (
 select 
     tbl_admin.admin_id as  bd_id,
+    br_bd_users.br_id as user_br_id,
     username as bd_user_name,
     phone_number as bd_phonenumber,
     leader_id 
 from tbl_admin 
-left join bd_leader_mapping on tbl_admin.admin_id = bd_leader_mapping.admin_id
-where tbl_admin.admin_id in(90,3614,3615,3616,5069,1368,3617,3618,84,4795,5483,3620,4186,1133,60,3621,3622,1001,3625,5138,3624,3633,3626,2918,3635,3628,3629,4951,1210,555,5482,4964,5481) 
+join bd_leader_mapping on tbl_admin.admin_id = bd_leader_mapping.admin_id
+join br_bd_users on br_bd_users.admin_id = tbl_admin.admin_id
 )
 
 ,cte_cl_income as (
@@ -80,7 +81,7 @@ and date(processing_at) between {{from_date}} and {{to_date}}
 group by 1 )
 
 select
-    bd_id,
+    user_br_id,
     sum(new_cx) as new_cx,
     sum(repeat_cx) as repeat_cx,
     sum(daily_GMV) as daily_gmv,
@@ -96,6 +97,7 @@ select
 from
 (select 
     bd_user_name,
+    user_br_id,
     bd_id,
     leader_id as cl_id,
     team_leader_view.city,
@@ -118,4 +120,4 @@ left join cte_cl_income on cte_cl_income.id = bd_tl_mapping.leader_id
 left join cx_repeat_rate on cx_repeat_rate.team_leader = bd_tl_mapping.leader_id
 left join dormant_customers on dormant_customers.team_leader = bd_tl_mapping.leader_id) x
 
-group by (x.bd_id)
+group by (x.user_br_id)

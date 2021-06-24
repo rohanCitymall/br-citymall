@@ -1,6 +1,7 @@
 select 
     tl.name as name,
     tl.id as erp_id,
+    bru.br_id as br_id,
     'Individual' as type,
     ua.city as city,
     p.district as district,
@@ -16,6 +17,7 @@ select
     1 as status
 from bd_leader_mapping blm
 join team_leaders tl on blm.leader_id = tl.id
+join br_bd_users bru on bru.admin_id = blm.admin_id
 join user_addresses ua on tl.address = ua.id
 join pincodes p on ua.pincode = p.pincode
 
