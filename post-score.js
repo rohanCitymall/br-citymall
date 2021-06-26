@@ -1,7 +1,7 @@
 const axios = require('axios')
 const moment = require('moment')
 const axiosMetabase = require('./axios-metabase')
-const kpiMap = require('./kpi-map')
+const { kpi_id_mapping: kpiMap, kpi_type_mapping } = require('./kpi-map')
 
 const metaUrl = 'https://analytics.citymall.live/api/card/2108/query'
 
@@ -28,7 +28,7 @@ const metaBody = {
                     "to_date"
                 ]
             ],
-            "value": "2021-06-23"
+            "value": "2021-06-26"
         }
     ]
 }
@@ -82,7 +82,11 @@ async function uploadKpi(){
             user_br_id: parseInt(br_admin_mapped[rec.bd_id]),
             activity_date: moment().format('YYYY-MM-DD'),
             kpi: fields.slice(1).map(el => {
-                return { id: kpiMap[el], value: Math.round(rec[el]) }
+                if(kpi_type_mapping[el] === 'int') {
+                    return { id: kpiMap[el], value: parseInt(rec[el]) }
+                }else{
+                    return { id: kpiMap[el], value: parseFloat(rec[el]) }
+                }
             })
         }
     })
