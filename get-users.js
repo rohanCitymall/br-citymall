@@ -23,34 +23,31 @@ async function getUsers(){
         if(el.customFields && (el.customFields[0].id == 426 || el.customFields[0].field_name.toLowerCase() === 'admin id')){
             el.admin_id = parseInt(el.customFields[0].value) || null
         }
+        el.br_id = el.id
     })
     
-    db.task( async t => {
-        for(let i = 0; i<data.length; i++){
-            await t.none(`
-                insert into br_bd_users(admin_id,br_id,name,emp_role_id,designation_name,role,role_name,email,mobile,reportee_br_id,reportee_name,reportee_emp_role_id,created_date,deleted_date,is_available,last_login_date)
-                values($(admin_id),$(id),$(name),$(emp_role_id),$(designation_name),$(role),$(role_name),$(email),$(mobile),$(reportee_br_id),$(reportee_name),$(reportee_emp_role_id),$(created_date),$(deleted_date),$(is_available),$(last_login_date))
-                on conflict(br_id) do update 
-                set 
-                    admin_id = $(admin_id),
-                    name = $(name),
-                    emp_role_id = $(emp_role_id),
-                    designation_name = $(designation_name),
-                    role = $(role),
-                    role_name = $(role_name),
-                    email = $(email),
-                    mobile = $(mobile),
-                    reportee_br_id = $(reportee_br_id),
-                    reportee_name = $(reportee_name),
-                    reportee_emp_role_id = $(reportee_emp_role_id),
-                    created_date = $(created_date),
-                    deleted_date = $(deleted_date),
-                    is_available = $(is_available),
-                    last_login_date = $(last_login_date)
-            `,data[i])
-        }
-        console.log('inserted', data.length, 'records')
-    })
+    const cs = new pgp.helpers.ColumnSet([
+        'admin_id',
+        'br_id',
+        'name',
+        'emp_role_id',
+        'designation_name',
+        'role',
+        'role_name',
+        'email',
+        'mobile',
+        'reportee_br_id',
+        'reportee_name',
+        'reportee_emp_role_id',
+        'created_date',
+        'deleted_date',
+        'is_available',
+        'last_login_date'
+      ],{table: 'br_bd_users'})
+      
+      const ins = pgp.helpers.insert(data,cs) + ` ON CONFLICT(br_id) DO UPDATE SET ${cs.assignColumns({from: 'EXCLUDED', skip: ['br_id']})}`
+      console.log(ins)
+      const result = await db.none(ins)
 }
 
 getUsers()
